@@ -57,14 +57,11 @@ var linkedFiltersType = {
         <%= f.input :subtitle, :input_html=>{:class=>'input-xxlarge'} %>
         <%= f.input :basename, :hint=>'Must not contain spaces or special chars', :input_html=>{:class=>'protected'} %>
         <%= f.input :author, :collection=>(ClearCMS::User.active + [@clear_cms_content.author]).compact.uniq %>
-        <%= f.input :tags, :input_html=>{:class=>'input-xlarge'}%>
-        <%= f.input :categories, :input_html=>{:class=>'input-xlarge', 'autocomplete'=>'off', 'data-provide'=>"typeahead", 'data-source'=>@clear_cms_content.site.categories.collect {|c| c['_id'] }.to_json} %>
-<!--     </div> -->
-
-      <% ClearCMS::Content.form_fields.each do |field,options| %>
-        <%# if models.include?(@clear_cms_content.class.to_s) %>
+        <!-- need to overwrite value below because of known formtasic bug flattening the array: https://github.com/justinfrench/formtastic/issues/1144 -->
+        <%= f.input :tags, :input_html=>{:class=>'input-xlarge', :value=> @clear_cms_content.tags.present? ? @clear_cms_content.tags.join(', ').to_json : '', 'autocomplete'=>'off', 'data-provide'=>"typeahead", 'data-source'=>@clear_cms_content.site.tags.collect {|t| t['_id'] }.to_json} %>
+        <%= f.input :categories, :input_html=>{:class=>'input-xlarge', :value=> @clear_cms_content.categories.present? ? @clear_cms_content.categories.join(', ').to_json : '', 'autocomplete'=>'off', 'data-provide'=>"typeahead", 'data-source'=>@clear_cms_content.site.categories.collect {|c| c['_id'] }.to_json} %>
+        <% ClearCMS::Content.form_fields.each do |field,options| %>
           <%= f.input field, options[:formtastic_options].merge(:wrapper_html=>{'data-types'=>options[:models].to_json}) %>
-        <%# end %>
       <% end %>
 
 
@@ -431,7 +428,7 @@ var linkedFiltersType = {
 
 <fieldset class="choices"><legend class="label"><label>Placement</label></legend><input id="content[content_blocks_attributes][0][content_assets_attributes][{%=random_id%}]_placement_none" name="content[content_blocks_attributes][0][content_assets_attributes][{%=random_id%}][placement][]" type="hidden" value="">
   <% ClearCMS::ContentAsset::PLACEMENTS.each do |placement| %>
-<ol class="choices-group"><li class="choice"><label for="content_content_blocks_attributes_0_content_assets_attributes_{%=random_id%}_placement_<%= placement %>"><input id="content_content_blocks_attributes_0_content_assets_attributes_{%=random_id%}_placement_<%= placement %>" name="content[content_blocks_attributes][0][content_assets_attributes][{%=random_id%}][placement][]" type="checkbox" value="<%= placement %>"><%= placement %></label></li>    
+<ol class="choices-group"><li class="choice"><label for="content_content_blocks_attributes_0_content_assets_attributes_{%=random_id%}_placement_<%= placement %>"><input id="content_content_blocks_attributes_0_content_assets_attributes_{%=random_id%}_placement_<%= placement %>" name="content[content_blocks_attributes][0][content_assets_attributes][{%=random_id%}][placement][]" type="checkbox" value="<%= placement %>"><%= placement %></label></li>
   <% end %>
   </ol></fieldset></li>
                   </div>
