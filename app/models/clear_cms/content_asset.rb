@@ -21,7 +21,7 @@ class ClearCMS::ContentAsset
   field :description
   field :credit
   field :placement
-  field :file
+  field :file, overwrite: true
   field :width
   field :height
 
